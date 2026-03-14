@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | STM Aventura Motos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            position: relative; /* Necesario para posicionar el logo de fondo */
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* Capa del Logo de Fondo */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            /* CAMBIA 'logo.png' POR EL NOMBRE EXACTO DE TU ARCHIVO */
+            background-image: url('css/img/logo01.png'); 
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100%; /* Tamaño del logo respecto al cuadro */
+            opacity: 0.20; /* 0.15 es un 85% de transparencia (muy sutil para que no moleste) */
+            z-index: -1; /* Lo pone detrás del texto */
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            font-weight: 400;
+            text-align: center;
+            letter-spacing: 2px;
+            color: #000;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente para ver el logo tras los inputs */
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #333; }
+
+        #success-overlay {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #000;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div id="form-content">       
+        <h2>STM MOTOS</h2>
+        <form id="registroForm">            
+            <input type="text" name="nombre" placeholder="Nombre" required>
+            <input type="tel" name="celular" placeholder="Número de celular  /  Ej: +5491112345678" required>            
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="codigo" placeholder="Ingrese el código del mensaje" required>
+            
+            <button type="submit" id="btnEnviar">Enviar Registro</button>
+        </form>
+    </div>
+
+    <div id="success-overlay">
+        <h2 style="font-size: 20px;">Gracias por registrarte en STM</h2>
+        <p style="color: #666; font-size: 14px;">La ventana se cerrará automáticamente.</p>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('registroForm');
+    const formContent = document.getElementById('form-content');
+    const successOverlay = document.getElementById('success-overlay');
+    const btn = document.getElementById('btnEnviar');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loader"></span> Enviando...';
+
+        const formData = new FormData(form);
+        
+        try {
+            await fetch('https://n8n.srv993085.hstgr.cloud/webhook/registro-completo', {
+                method: 'POST',
+                body: formData
+            });
+            mostrarExito();
+        } catch (error) {
+            mostrarExito();
+        }
+    });
+
+    function mostrarExito() {
+        formContent.style.display = 'none';
+        successOverlay.style.display = 'block';
+        setTimeout(() => { window.close(); }, 3000);
+    }
+</script>
+
+</body>
+</html>

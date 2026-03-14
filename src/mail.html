@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación de Alta</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #09046d, #7c3aed);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .welcome-text {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: #555;
+        }
+        .validation-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .validation-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+        .validation-button:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+        }
+        .expiry-notice {
+            font-size: 14px;
+            color: #ef4444;
+            margin-top: 15px;
+            font-style: italic;
+        }
+        .footer {
+            background-color: #f1f5f9;
+            padding: 25px 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+        }
+        .contact-info {
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+        }
+        .step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            color: #64748b;
+        }
+        .step.active .step-number {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .step-name {
+            font-size: 14px;
+            color: #64748b;
+        }
+        .step.active .step-name {
+            color: #4f46e5;
+            font-weight: 600;
+        }
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background-color: #e2e8f0;
+            z-index: 0;
+        }
+        @media (max-width: 600px) {
+            .content {
+                padding: 30px 20px;
+            }
+            .steps {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .steps::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">STM - Aventura Motos</div>
+            <h1>Validación de Alta</h1>
+        </div>
+        
+        <div class="content">
+            <p class="welcome-text">Hola {{nombre}},</p>
+            <p>Gracias por registrarte en nuestro servicio. Para completar el proceso de alta y activar tu cuenta, necesitamos que valides tu dirección de email.</p>
+            
+            <div class="steps">
+                <div class="step active">
+                    <div class="step-number">1</div>
+                    <div class="step-name">Registro</div>
+                </div>
+                <div class="step active">
+                    <div class="step-number">2</div>
+                    <div class="step-name">Validación</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-name">Completado</div>
+                </div>
+            </div>
+            
+            <div class="validation-box">
+                <p><strong>Haz clic en el siguiente botón para validar tu email:</strong></p>
+                <a href="{{validation_url}}" class="validation-button">VALIDAR MI EMAIL</a>
+                <p class="expiry-notice">Este enlace expirará en 24 horas por seguridad.</p>
+            </div>
+            
+            <p>Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:</p>
+            <p style="word-break: break-all; background-color: #f1f5f9; padding: 10px; border-radius: 5px; font-size: 14px; color: #4f46e5;">
+                {{validation_url}}
+            </p>
+            
+            <p>Si no has solicitado este registro, por favor ignora este mensaje.</p>
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 STM - Aventura Motos. Todos los derechos reservados.</p>
+            <p>Este es un mensaje automático, por favor no respondas a este email.</p>
+            <div class="contact-info">
+                <p>¿Necesitas ayuda? Contáctanos en: soporte@miempresa.com</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
