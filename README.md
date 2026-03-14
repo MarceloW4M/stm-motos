@@ -1,193 +1,210 @@
 # STM - Taller de Motos
 
-Sistema de gestión integral para talleres de motocicletas. Permite administrar clientes, vehículos, repuestos, órdenes de reparación, turnos y generar informes. Desarrollado con PHP 8.2, MySQL y Docker para un entorno de desarrollo y producción simplificado.
+Sistema de gestion para taller mecanico de motos, desarrollado en PHP + MySQL.
+Permite administrar clientes, vehiculos, servicios, repuestos, turnos, ordenes y reportes.
 
-## 🚀 Características
+## Resumen
 
-- **Gestión de Clientes**: Registro y administración de información de clientes con datos de contacto y CUIT
-- **Control de Vehículos**: Inventario de motocicletas con marca, modelo, matrícula, VIN y asociación a clientes
-- **Inventario de Repuestos**: Control de stock, precios y gestión de partes para reparaciones
-- **Órdenes de Reparación**: Creación y seguimiento de órdenes de trabajo con tareas y repuestos utilizados
-- **Sistema de Turnos**: Programación y gestión de citas para servicios
-- **Informes y Reportes**: Generación de informes de inventario y estadísticas
-- **Generación de PDFs**: Facturas y documentos en formato PDF usando TCPDF
-- **Autenticación Segura**: Sistema de login con contraseñas hasheadas (bcrypt)
-- **Interfaz Responsiva**: Diseño adaptativo para diferentes dispositivos
+- Backend: `PHP 8.2` con `PDO`
+- Base de datos: `MySQL` (`stm_taller`)
+- Web server: `Nginx`
+- Contenedores: `Docker Compose`
+- PDF: `TCPDF`
+- Frontend: HTML + CSS + JS sin framework
 
-## 🛠️ Tecnologías Utilizadas
+## Funcionalidades Principales
 
-- **Backend**: PHP 8.2 con PDO para acceso a base de datos
-- **Base de Datos**: MySQL con esquema `stm_taller`
-- **Servidor Web**: Nginx (imagen Alpine)
-- **Contenedorización**: Docker & Docker Compose
-- **Generación de PDFs**: Biblioteca TCPDF
-- **Estilos**: CSS personalizado (sin frameworks externos)
+- ABM de clientes
+- ABM de vehiculos
+- ABM de servicios (`servicios.php`)
+- ABM de repuestos
+- Gestion de turnos con cupo maximo por hora
+- Asignacion de mecanico por turno
+- Generacion de ordenes de reparacion
+- Carga de tareas e insumos por orden
+- Dashboard de agenda con vista por horario
+- Historico de reparaciones por cliente
+- Seccion temporal de repuestos/insumos historicos por cliente
+- Generacion de PDF de orden/factura
+- Chat flotante en dashboard preparado para integracion con agente `n8n`
 
-## 📋 Requisitos Previos
+## Estructura Relevante
 
-- Docker y Docker Compose instalados
-- Puerto 8080 disponible (para la aplicación)
-- Puerto 3306 disponible (para MySQL, si no se usa el contenedor)
-
-## 🚀 Instalación y Configuración
-
-### 1. Clonar o Descargar el Proyecto
-
-```bash
-git clone <url-del-repositorio>
-cd stm-taller-motos
+```text
+.
+├── docker-compose.yml
+├── init_database.sql
+├── scripts/
+│   ├── migrar_clientes_access.php
+│   ├── migrar_historico_access.php
+│   ├── migrar_historico_insumos_access.php
+│   └── migrar_vehiculos_access.php
+└── src/
+		├── dashboard.php
+		├── clientes.php
+		├── clientes_m.php
+		├── vehiculos.php
+		├── repuestos.php
+		├── servicios.php
+		├── turnos.php
+		├── ordenes.php
+		├── historico_cliente.php
+		├── generar_pdf.php
+		├── includes/
+		│   ├── config.php
+		│   ├── database.php
+		│   ├── auth.php
+		│   ├── header.php
+		│   └── footer.php
+		└── css/
 ```
 
-### 2. Construir y Ejecutar los Contenedores
+## Instalacion Rapida
+
+1. Clonar repositorio
+
+```bash
+git clone https://github.com/MarceloW4M/BackUp.git
+cd BackUp
+```
+
+2. Levantar servicios
 
 ```bash
 docker-compose up --build
 ```
 
-Este comando:
-- Construirá las imágenes de Nginx, PHP-FPM y MySQL
-- Iniciará los servicios
-- Ejecutará el script de inicialización de la base de datos (`init_database.sql`)
+3. Abrir aplicacion
 
-### 3. Acceder a la Aplicación
+- `http://localhost:8080`
 
-- **Aplicación Principal**: [http://localhost:8080](http://localhost:8080)
-- **phpMyAdmin** (opcional): [http://localhost:8080/phpmyadmin](http://localhost:8080/phpmyadmin) (si configurado en docker-compose.yml)
+4. Credenciales por defecto
 
-### 4. Credenciales de Acceso
+- Usuario: `admin`
+- Password: `admin123`
 
-- **Usuario**: `admin`
-- **Contraseña**: `admin123`
+## Configuracion
 
-## 📁 Estructura del Proyecto
+Archivo: `src/includes/config.php`
 
-```
-stm-taller-motos/
-├── docker/                    # Configuraciones Docker
-│   ├── nginx/
-│   │   └── default.conf      # Configuración Nginx
-│   ├── php/
-│   │   └── Dockerfile        # Imagen PHP-FPM personalizada
-│   └── prueba/               # Archivos de prueba (legacy)
-├── src/                      # Código fuente de la aplicación
-│   ├── includes/             # Utilidades compartidas
-│   │   ├── auth.php         # Gestión de autenticación y sesiones
-│   │   ├── config.php       # Configuración de BD y constantes
-│   │   ├── database.php     # Clase de conexión PDO
-│   │   ├── header.php       # Plantilla HTML header
-│   │   └── footer.php       # Plantilla HTML footer
-│   ├── css/                 # Hojas de estilo
-│   │   ├── style.css        # Estilos principales
-│   │   └── styleess.css     # Estilos adicionales
-│   ├── tcpdf/               # Biblioteca TCPDF para PDFs
-│   ├── *.php                # Páginas principales (clientes.php, vehiculos.php, etc.)
-│   ├── login.php            # Página de autenticación
-│   ├── dashboard.php        # Panel principal
-│   └── generar_pdf.php      # Generación de facturas PDF
-├── docker-compose.yml       # Configuración de servicios
-├── init_database.sql        # Script de inicialización de BD
-├── reinstall.sh            # Script para reinstalación completa
-└── reset_password.sh       # Script para resetear contraseña
-```
+Constantes clave:
 
-## 🗄️ Esquema de Base de Datos
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`
+- `SITE_NAME`
+- `OPEN_TIME`, `CLOSE_TIME`
+- `N8N_CHAT_WEBHOOK_URL` (si queres activar chatbot)
+- `N8N_CHAT_TIMEOUT_MS`
 
-La aplicación utiliza MySQL con las siguientes tablas principales:
+Si `N8N_CHAT_WEBHOOK_URL` esta vacio, el chat de dashboard queda visible pero no envia consultas al VPS.
 
-- `usuarios` - Autenticación de usuarios
-- `clientes` - Información de clientes
-- `vehiculos` - Registro de motocicletas
-- `repuestos` - Inventario de repuestos
-- `turnos` - Citas y turnos de servicio
-- `ordenes_reparacion` - Órdenes de trabajo
-- `tareas_orden` - Tareas asociadas a órdenes
-- `repuestos_orden` - Repuestos utilizados en órdenes
+## Base de Datos (tablas principales)
 
-## 🔧 Configuración
+- `usuarios`
+- `clientes`
+- `vehiculos`
+- `servicios`
+- `repuestos`
+- `turnos`
+- `ordenes_reparacion`
+- `tareas_orden`
+- `orden_repuestos`
+- `historico`
+- `historico_insumos`
 
-### Variables de Entorno
+## Migracion desde Access (.mdb)
 
-La configuración principal se encuentra en `src/includes/config.php`:
+Se incluyen scripts para migrar datos historicos.
 
-```php
-define('DB_HOST', '10.50.0.30');
-define('DB_NAME', 'stm_taller');
-define('DB_USER', 'root');
-define('DB_PASS', 'tu_password');
-define('SITE_NAME', 'STM - Aventura Motos');
+Ejemplos:
+
+```bash
+php scripts/migrar_clientes_access.php --mdb="/ruta/archivo.mdb" --apply
+php scripts/migrar_historico_access.php --mdb="/ruta/archivo.mdb" --apply
+php scripts/migrar_vehiculos_access.php --mdb="/ruta/archivo.mdb" --apply
+php scripts/migrar_historico_insumos_access.php --mdb="/ruta/archivo.mdb" --apply
 ```
 
-### Docker Compose
+Notas:
 
-Los servicios están definidos en `docker-compose.yml`:
-- **nginx**: Servidor web en puerto 8080
-- **php**: PHP-FPM para procesamiento
-- **mysql**: Base de datos MySQL
+- Sin `--apply`, algunos scripts corren en modo simulacion.
+- `historico_insumos` se vincula por `orden` contra `historico`.
 
-## 📖 Uso
+## Flujo Operativo Recomendado
 
-### Navegación Principal
+1. Crear/actualizar cliente.
+2. Asociar vehiculo al cliente.
+3. Definir servicios disponibles en `servicios.php`.
+4. Cargar turno en `turnos.php` asignando mecanico.
+5. Crear orden desde dashboard/turnos.
+6. Cargar tareas y repuestos de la orden.
+7. Generar PDF si corresponde.
 
-1. **Dashboard**: Vista general con estadísticas y accesos rápidos
-2. **Clientes**: Gestión completa de clientes
-3. **Vehículos**: Administración de motocicletas
-4. **Repuestos**: Control de inventario
-5. **Órdenes**: Creación y seguimiento de reparaciones
-6. **Turnos**: Programación de citas
-7. **Informes**: Reportes y estadísticas
+## Chatbot n8n (Dashboard)
 
-### Funcionalidades Clave
+`dashboard.php` incluye un boton flotante de chat.
 
-- **Búsqueda y Filtrado**: En todas las listas principales
-- **Paginación**: Navegación eficiente en listas grandes
-- **PDF Generation**: Facturas automáticas con TCPDF
-- **Responsive Design**: Adaptable a móviles y tablets
+Payload enviado al webhook:
 
-## 🔒 Seguridad
+```json
+{
+	"message": "consulta del usuario",
+	"source": "dashboard-stm",
+	"user": "usuario_logueado",
+	"page": "dashboard.php",
+	"sent_at": "ISO-8601"
+}
+```
 
-- Autenticación basada en sesiones PHP
-- Contraseñas hasheadas con bcrypt
-- Consultas parametrizadas para prevenir SQL injection
-- Validación de entrada en formularios
+El workflow de n8n puede responder con campos como:
 
-## 🐛 Solución de Problemas
+- `reply`
+- `response`
+- `answer`
+- `message`
 
-### Problemas Comunes
+## Comandos Utiles
 
-1. **Error de conexión a BD**: Verificar configuración en `config.php` y que MySQL esté ejecutándose
-2. **Headers already sent**: Asegurar `ob_start()` antes de includes en generación de PDFs
-3. **Puerto ocupado**: Cambiar puertos en `docker-compose.yml` si es necesario
-
-### Reinicio Completo
-
-Para una reinstalación completa:
+Reinstalacion completa:
 
 ```bash
 bash reinstall.sh
 ```
 
-### Reset de Contraseña
+Reset de password admin:
 
 ```bash
 bash reset_password.sh
 ```
 
-## 🤝 Contribución
+Validar sintaxis de un archivo PHP:
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+```bash
+php -l src/archivo.php
+```
 
-## 📄 Licencia
+## Publicacion en GitHub
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+Si ya existe remoto:
 
-## 📞 Soporte
+```bash
+git add .
+git commit -m "mensaje"
+git push
+```
 
-Para soporte técnico o reportes de bugs, por favor crear un issue en el repositorio.
+Si no existe remoto:
 
----
+```bash
+git remote add origin https://github.com/MarceloW4M/BackUp.git
+git branch -M main
+git push -u origin main
+```
 
-**Desarrollado con ❤️ para la gestión eficiente de talleres de motocicletas.**
+## Estado del Proyecto
+
+Proyecto activo, con foco en:
+
+- estabilidad de agenda y ordenes
+- migracion de legacy Access
+- soporte operativo diario del taller
+
