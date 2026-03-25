@@ -163,10 +163,10 @@ if (!empty($cliente['foto'])) {
 <link rel="stylesheet" href="css/styleess.css">
 
 <div class="container">
-    <h2>Ficha Detallada del Cliente</h2>
+    <h2>Editar Cliente</h2>
     
     <?php if (isset($mensaje)): ?>
-    <div class="alert alert-<?php echo $tipo_mensaje; ?>">
+    <div class="alert <?php echo isset($tipo_mensaje) ? $tipo_mensaje : ''; ?>">
         <?php echo $mensaje; ?>
         <?php if (isset($error_foto)): ?>
         <br><small class="text-danger"><?php echo $error_foto; ?></small>
@@ -176,10 +176,7 @@ if (!empty($cliente['foto'])) {
     
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">                    
-                </div>
-                <div class="card-body">
+            <div class="form-container">
                     <form method="POST" enctype="multipart/form-data" onsubmit="return validarFormulario(event)">
                         <input type="hidden" name="foto_actual" value="<?php echo $cliente['foto'] ?? ''; ?>">
                         
@@ -255,7 +252,7 @@ if (!empty($cliente['foto'])) {
                         <div class="form-group">
                             <label for="foto">Foto del Cliente:</label>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="photo-preview">
                                         <?php if (!empty($cliente['foto']) && file_exists('uploads/clientes/' . $cliente['foto'])): ?>
                                             <img src="<?php echo $foto_url; ?>" alt="Foto actual" 
@@ -268,7 +265,15 @@ if (!empty($cliente['foto'])) {
                                         <?php endif; ?>
                                     </div>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-6 text-center">
+                                    <h6>Código QR del Cliente</h6>
+                                    <img src="<?php echo $qr_url; ?>" alt="Código QR" style="max-width: 160px; height: auto;">
+                                    <p class="small text-muted">Escanea para datos del cliente</p>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-12">
                                     <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
                                     <small class="text-muted">Formatos permitidos: JPG, PNG, GIF, WebP (Max. 2MB)</small>
                                     <?php if (!empty($cliente['foto'])): ?>
@@ -277,26 +282,16 @@ if (!empty($cliente['foto'])) {
                                         <label for="eliminar_foto" class="form-check-label">Eliminar foto actual</label>
                                     </div>
                                     <?php endif; ?>
-                                    <!-- Código QR al lado de la foto -->
-                                    <div class="mt-3 text-center">
-                                        <h6>Código QR del Cliente</h6>
-                                        <img src="<?php echo $qr_url; ?>" alt="Código QR" style="max-width: 120px; height: auto;">
-                                        <p class="small text-muted">Escanea para datos del cliente</p>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="form-group mt-4">
-                            <button type="submit" name="actualizar_cliente" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Actualizar Datos
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="abrirHistorico()">
-                                Histórico
-                            </button>
-                            <a href="clientes.php" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Volver a la Lista
-                            </a>
+                        <div class="form-row">
+                            <div class="form-group" style="align-self: flex-end;">
+                                <button type="submit" name="actualizar_cliente" class="btn btn-primary">Actualizar Cliente</button>
+                                <button type="button" class="btn btn-secondary" onclick="abrirHistorico()">Histórico</button>
+                                <a href="clientes.php" class="btn btn-secondary">Cancelar</a>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -306,7 +301,7 @@ if (!empty($cliente['foto'])) {
 </div>
 
 <div id="modalHistorico" class="modal" style="display:none;">
-    <div class="modal-content" style="max-width: 1100px; width: 95%;">
+    <div class="modal-content" style="max-width: 600px; width: 95%;">
         <span class="close" onclick="cerrarHistorico()">&times;</span>
         <div id="historicoContenido">
             <p>Cargando histórico...</p>

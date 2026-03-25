@@ -1,7 +1,10 @@
 /* ESTILOS PARA GESTIÓN DE CLIENTES */
+/* Contenedor principal: ancho limitado y centrado para márgenes consistentes */
 .container {
-    max-width: 100%;
-    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 /* Contenedor de tabla con scroll */
@@ -111,9 +114,9 @@
 }
 
 .acciones-container .btn {
-    padding: 5px 10px;
-    font-size: 12px;
-    min-width: 70px;
+    padding: 8px 14px;
+    font-size: 14px;
+    min-width: 80px;
 }
 
 .acciones-container form {
@@ -124,79 +127,105 @@
 .search-container {
     margin-bottom: 20px;
     background: white;
-    padding: 10px 0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #d3e3fb;
+    box-shadow: 0 2px 8px rgba(31, 95, 191, 0.06);
 }
 
 .search-form {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
 .search-box {
-    flex: 1;
     position: relative;
+    width: 100%;
+    max-width: 720px;
 }
 
 .search-box input {
     width: 100%;
-    padding: 10px 15px 10px 40px;
-    border: 2px solid var(--color-accent, #007bff);
-    border-radius: 4px;
-    font-size: 16px;
+    padding: 7px 12px 7px 34px;
+    border: 1.5px solid #a6c4ef;
+    border-radius: 20px;
+    font-size: 13.5px;
+    background: #fafcff;
+    color: #16345d;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .search-box input:focus {
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    border-color: #3d78d0;
+    box-shadow: 0 0 0 0.2rem rgba(79, 141, 228, 0.18);
 }
 
 .search-icon {
     position: absolute;
-    left: 15px;
+    left: 11px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--color-accent, #007bff);
+    font-size: 13px;
+    color: #6a9fd8;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
 }
 
 .btn-buscar {
-    padding: 10px 20px;
-    background-color: var(--color-accent, #007bff);
+    padding: 7px 16px;
+    background: #1f5fbf;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: all 0.3s ease;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 2px 6px rgba(31, 95, 191, 0.18);
+    white-space: nowrap;
 }
 
 .btn-buscar:hover {
-    background-color: var(--color-accent-hover, #0056b3);
+    background: #3d78d0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(31, 95, 191, 0.22);
 }
 
 .btn-limpiar {
-    padding: 10px 20px;
-    background-color: var(--color-secondary, #6c757d);
-    color: white;
-    border: none;
-    border-radius: 4px;
+    padding: 7px 14px;
+    background: #f0f4fa;
+    color: #1f5fbf;
+    border: 1.5px solid #bfd4f4;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: all 0.3s ease;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    white-space: nowrap;
 }
 
 .btn-limpiar:hover {
-    background-color: var(--color-secondary-hover, #545b62);
+    background: #dce9fc;
+    border-color: #3d78d0;
+    transform: translateY(-1px);
 }
 
 /* Contador de resultados */
 .result-count {
-    margin-top: 5px;
-    color: var(--color-accent, #007bff);
+    text-align: center;
+    margin-top: 4px;
+    color: #6a9fd8;
     font-style: italic;
-    font-size: 14px;
+    font-size: 12.5px;
 }
 
 /* Scrollbar personalizada */
@@ -229,7 +258,7 @@
 }
 
 .pagination .btn {
-    padding: 8px 15px;
+     padding: 12px;
     background-color: var(--color-accent, #007bff);
     color: white;
     border: none;
@@ -319,6 +348,10 @@ h3 {
     margin-bottom: 10px;
 }
 
+
+
+
+
 /* Responsive */
 @media (max-width: 768px) {
     .search-form {
@@ -348,8 +381,12 @@ h3 {
 
 /* ESTILOS PARA GESTIÓN DE CLIENTES_M */
 .container {
-    padding: 20px;
+    /* Reutiliza la misma configuración de contenedor centralizado */
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
     position: relative;
+    box-sizing: border-box;
 }
 
 .qr-header-wrapper {
@@ -372,6 +409,59 @@ h3 {
     position: relative;
     display: inline-block;
 }
+
+/* Estilos móviles profesionales para formularios (alta_cliente) */
+.mobile-card {
+    max-width: 720px;
+    margin: 14px auto;
+    background: linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+    border: 1px solid rgba(31,95,191,0.06);
+}
+.mobile-card h2 { margin: 0 0 10px; font-size: 1.05rem; color: var(--color-primary,#0a088f); }
+.mobile-card .muted { color: #6b7280; font-size: 0.95rem; margin-bottom: 8px; }
+.form-control {
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid #e1eefc;
+    background:#fbfdff;
+    font-size:1rem;
+    box-sizing:border-box;
+    margin-top:6px;
+}
+.form-group { margin-bottom:12px; }
+.form-row { display:flex; gap:10px; flex-wrap:wrap; }
+.form-row .form-group { flex:1; min-width:140px; }
+.btn { display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; font-size:0.98rem; }
+.btn-primary { background:linear-gradient(180deg,#1f5fbf,#1750a8); color:#fff; box-shadow:0 6px 18px rgba(31,95,191,0.14); }
+.btn-secondary { background:#f0f4fa; color:#16345d; border:1px solid #d7e6fb; }
+.alert { background:#fff8e6; border:1px solid #ffe9b8; padding:10px 12px; border-radius:8px; color:#5a4630; margin-bottom:12px; }
+
+@media (max-width:480px) {
+    .mobile-card { padding:14px; margin:10px; border-radius:12px; }
+    .btn { width:100%; }
+    .form-row { flex-direction:column; }
+}
+
+/* id_boot visual button shared style */
+.id-boot-btn{display:inline-block;padding:10px 14px;border-radius:10px;background:#f0f4fa;color:#16345d;border:1px solid #d7e6fb;box-shadow:0 4px 14px rgba(31,95,191,0.06);font-weight:700;margin-top:8px}
+
+/* Igualar botones en formulación móvil dentro de la tarjeta */
+.mobile-card .form-actions {
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+}
+.mobile-card .form-actions .btn {
+    flex:1;
+    min-width:0;
+}
+
+
+
 
 .qr-img {
     width: 100px;
@@ -465,6 +555,21 @@ h3 {
     position: relative;
 }
 
+/* Normalizar espaciado interno para coincidir con style.css */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 12px 16px;
+}
+
+.card-body {
+    padding: 16px;
+    background: transparent;
+}
+
 .form-group {
     margin-bottom: 15px;
     position: relative;
@@ -478,8 +583,21 @@ h3 {
 
 .btn {
     border-radius: 4px;
-    padding: 8px 16px;
+    padding: 8px 14px;
     position: relative;
+    font-size: 14px;
+    line-height: 1.2;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Botones pequeños: igualar tamaño visual al botón principal */
+.btn-sm {
+    padding: 8px 14px;
+    font-size: 14px;
+    min-height: 38px;
 }
 
 .alert {
@@ -872,3 +990,294 @@ h3 {
     }
 }
 /* --------------------- */
+
+body:not(.clientes-page) h2 {
+    color: #123f85;
+    border-bottom-color: #8cb3eb;
+}
+
+body:not(.clientes-page) h3,
+body:not(.clientes-page) .section-header,
+body:not(.clientes-page) .form-group label,
+body:not(.clientes-page) .search-icon,
+body:not(.clientes-page) .pagination-info,
+body:not(.clientes-page) .result-count,
+body:not(.clientes-page) .card-header,
+body:not(.clientes-page) .agenda-title-row h3,
+body:not(.clientes-page) .agenda-card-header h4 {
+    color: #1d4f94;
+}
+
+body:not(.clientes-page) .search-container,
+body:not(.clientes-page) .form-container,
+body:not(.clientes-page) .card,
+body:not(.clientes-page) .agenda-layout,
+body:not(.clientes-page) .login-container {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid #d3e3fb;
+    border-radius: 16px;
+    box-shadow: 0 14px 30px rgba(31, 95, 191, 0.08);
+}
+
+body:not(.clientes-page) .search-box input,
+body:not(.clientes-page) .form-control,
+body:not(.clientes-page) .form-group :is(input, select, textarea),
+body:not(.clientes-page) .agenda-filter-select {
+    border-color: #a6c4ef;
+    color: #16345d;
+}
+
+body:not(.clientes-page) .search-box input:focus,
+body:not(.clientes-page) .form-control:focus,
+body:not(.clientes-page) .form-group :is(input, select, textarea):focus,
+body:not(.clientes-page) .agenda-filter-select:focus {
+    outline: none;
+    border-color: #3d78d0;
+    box-shadow: 0 0 0 0.22rem rgba(79, 141, 228, 0.2);
+}
+
+body:not(.clientes-page) .table-wrapper-scroll {
+    border: 1px solid #a7c3ee;
+    border-radius: 16px;
+    box-shadow: 0 16px 35px rgba(27, 82, 161, 0.08);
+    background: rgba(255, 255, 255, 0.96);
+}
+
+body:not(.clientes-page) .table-fixed th,
+body:not(.clientes-page) .table-fixed .th-id,
+body:not(.clientes-page) .table th {
+    background: #123f85;
+}
+
+body:not(.clientes-page) .table-fixed tbody tr:nth-child(even) {
+    background: #f6faff;
+}
+
+body:not(.clientes-page) .table-fixed tbody tr:hover,
+body:not(.clientes-page) .table tr:hover {
+    background: #dcebff;
+}
+
+body:not(.clientes-page) .pagination-number {
+    background: #edf4ff;
+    color: #1f5fbf;
+    border-color: #bfd4f4;
+}
+
+body:not(.clientes-page) .pagination-number:hover,
+body:not(.clientes-page) .pagination-number.active {
+    background: #2f74d1;
+    color: #ffffff;
+    border-color: #2f74d1;
+    box-shadow: 0 10px 20px rgba(47, 116, 209, 0.18);
+}
+
+body:not(.clientes-page) .date-selector-compact {
+    background: #123f85;
+}
+
+body:not(.clientes-page) .compact-date-input:hover,
+body:not(.clientes-page) .btn-today-compact:hover,
+body:not(.clientes-page) .nav-arrow:hover,
+body:not(.clientes-page) .timeline-card:hover,
+body:not(.clientes-page) .agenda-card:hover {
+    background: #f4f9ff;
+    color: #2b69c1;
+    border-color: #9fc0f0;
+    box-shadow: 0 16px 30px rgba(31, 95, 191, 0.14);
+}
+
+body:not(.clientes-page) .timeline-board {
+    border-color: #d3e3fb;
+    background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+}
+
+body:not(.clientes-page) .timeline-card,
+body:not(.clientes-page) .agenda-card {
+    border-color: #cfe0ff;
+    box-shadow: 0 10px 22px rgba(31, 95, 191, 0.08);
+}
+
+body:not(.clientes-page) .timeline-card {
+    border-left-color: #2a72cf;
+}
+
+body:not(.clientes-page) .timeline-note,
+body:not(.clientes-page) .agenda-note,
+body:not(.clientes-page) .agenda-hour,
+body:not(.clientes-page) .mecanico-pill,
+body:not(.clientes-page) .estado-pill,
+body:not(.clientes-page) .slot-badge,
+body:not(.clientes-page) .stat-value {
+    background: #edf5ff;
+    color: #17539f;
+    border-color: #bfd7fb;
+}
+
+/* CHATBOT STYLES */
+.chatbot-toggle {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #184f9c 0%, #2a72cf 100%);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 14px 28px rgba(31, 95, 191, 0.3);
+    transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    z-index: 1100;
+}
+
+.chatbot-toggle:hover {
+    background: linear-gradient(135deg, #2e69c2 0%, #69a5f2 100%);
+    box-shadow: 0 18px 34px rgba(31, 95, 191, 0.36);
+    transform: translateY(-2px);
+}
+
+.chatbot-panel {
+    position: fixed;
+    right: 22px;
+    bottom: 88px;
+    width: 340px;
+    max-width: calc(100vw - 28px);
+    height: 460px;
+    background: #fff;
+    border: 1px solid #d8e6fb;
+    border-radius: 14px;
+    box-shadow: 0 22px 44px rgba(22, 56, 106, 0.22);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1100;
+}
+
+.chatbot-panel.open {
+    display: flex;
+}
+
+.chatbot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, #123f85 0%, #1f5fbf 58%, #4f8de4 100%);
+    color: #fff;
+    font-weight: 700;
+}
+
+.chatbot-close {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 2px 6px;
+    transition: background-color 0.25s ease;
+    border-radius: 6px;
+}
+
+.chatbot-close:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.chatbot-status {
+    padding: 6px 12px;
+    font-size: 12px;
+    background: #f3f8ff;
+    border-bottom: 1px solid #e1ecfb;
+    color: #264d84;
+}
+
+.chatbot-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    background: #f6faff;
+}
+
+.chat-msg {
+    max-width: 88%;
+    margin-bottom: 8px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.35;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.chat-msg.user {
+    margin-left: auto;
+    background: #dcebff;
+    border: 1px solid #bfd8fb;
+    color: #184879;
+}
+
+.chat-msg.bot {
+    margin-right: auto;
+    background: #fff;
+    border: 1px solid #d7e6fa;
+    color: #1e365b;
+}
+
+.chatbot-input {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 10px;
+    border-top: 1px solid #e2ecf9;
+    background: #fff;
+}
+
+.chatbot-input input {
+    border: 1px solid #bdd3f3;
+    border-radius: 8px;
+    padding: 9px 10px;
+    font-size: 13px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.chatbot-input input:focus {
+    outline: none;
+    border-color: #4f8de4;
+    box-shadow: 0 0 0 0.22rem rgba(79, 141, 228, 0.18);
+}
+
+.chatbot-input button {
+    border: none;
+    border-radius: 8px;
+    padding: 0 14px;
+    background: linear-gradient(135deg, #184f9c 0%, #2a72cf 100%);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.chatbot-input button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2e69c2 0%, #69a5f2 100%);
+    transform: translateY(-1px);
+}
+
+.chatbot-input button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .chatbot-panel {
+        right: 10px;
+        bottom: 80px;
+        width: calc(100vw - 20px);
+        height: 72vh;
+    }
+    .chatbot-toggle {
+        right: 12px;
+        bottom: 12px;
+    }
+}
+}

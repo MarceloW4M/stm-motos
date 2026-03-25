@@ -129,12 +129,12 @@ foreach ($repuestos as $repuesto) {
     <div class="search-container">
         <form method="GET" action="repuestos.php" class="search-form">
             <div class="search-box">
-                <span class="search-icon">🔍</span>
+                <i class="fas fa-search search-icon"></i>
                 <input type="text" name="buscar" id="searchInput" placeholder="Buscar por nombre o descripción..." value="<?php echo htmlspecialchars($busqueda); ?>">
             </div>
-            <button type="submit" class="btn-buscar">Buscar</button>
+            <button type="submit" class="btn btn-primary">Buscar</button>
             <?php if (!empty($busqueda)): ?>
-            <a href="repuestos.php" class="btn-limpiar">Limpiar</a>
+            <a href="repuestos.php" class="btn btn-secondary">Limpiar</a>
             <?php endif; ?>
         </form>
         <div id="resultCount" class="result-count">
@@ -180,11 +180,6 @@ foreach ($repuestos as $repuesto) {
                     </td>
                     <td class="td-acciones">
                         <div class="acciones-container">
-                            <form method="POST" style="display: inline-flex; gap: 5px; align-items: center;">
-                                <input type="hidden" name="id" value="<?php echo $repuesto['id']; ?>">
-                                <input type="number" name="nuevo_stock" value="<?php echo $repuesto['stock']; ?>" min="0" style="width: 70px; padding: 5px;">
-                                <button type="submit" name="actualizar_stock" class="btn btn-secondary btn-sm">Actualizar</button>
-                            </form>
                             <a href="editar_repuesto.php?id=<?php echo $repuesto['id']; ?>" class="btn btn-primary btn-sm">Editar</a>
                             <a href="repuestos.php?eliminar=<?php echo $repuesto['id']; ?>&pagina=<?php echo $pagina_actual; ?>&buscar=<?php echo urlencode($busqueda); ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este repuesto?')">Eliminar</a>
                         </div>

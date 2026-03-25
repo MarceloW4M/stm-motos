@@ -30,6 +30,14 @@ services:
       - PHP_MAX_EXECUTION_TIME=120
       - PHP_UPLOAD_MAX_FILESIZE=20M
       - PHP_POST_MAX_SIZE=20M
+      # Variables de entorno para la aplicación y conexión a BD
+      - DB_HOST=10.50.0.30
+      - DB_PORT=3406
+      - DB_NAME=stm_taller
+      - DB_USER=root
+      - DB_PASS=rootpassword
+      # API key para proteger endpoints (déjalo vacío para desactivar)
+      - API_KEY=
 
 networks:
   stm_network:

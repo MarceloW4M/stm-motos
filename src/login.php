@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if (file_exists('css/img/logo01.png')): ?>
                     <img src="css/img/logo01.png" alt="Logo del Sistema" class="logo">
                 <?php else: ?>
-                    <i class="fas fa-lock" style="font-size: 50px; color: #4a6ee0;"></i>
+                    <i class="fas fa-lock" style="font-size: 50px; color: #2a72cf;"></i>
                 <?php endif; ?> 
         </div>
         

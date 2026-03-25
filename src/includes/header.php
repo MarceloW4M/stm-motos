@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
     <title><?php echo isset($page_title) ? $page_title : 'STM - Aventura Motos'; ?></title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body<?php echo isset($body_class) && $body_class !== '' ? ' class="' . htmlspecialchars($body_class, ENT_QUOTES, 'UTF-8') . '"' : ''; ?>>
     <header class="header">
         <div class="logo">           
             <h1>STM - Aventura Motos</h1>

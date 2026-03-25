@@ -298,8 +298,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_tarea'])) {
                         <td>$<?php echo number_format($subtotal, 2); ?></td>
                         <td>
                             <?php if (!$orden_finalizada): ?>
-                                <a href="eliminar_repuesto_orden.php?orden_id=<?php echo $orden_id; ?>&repuesto_id=<?php echo $repuesto['id']; ?>" 
-                                   class="btn btn-sm btn-secondary"
+                                          <a href="eliminar_repuesto_orden.php?orden_id=<?php echo $orden_id; ?>&repuesto_id=<?php echo $repuesto['id']; ?>" 
+                                              class="btn btn-sm btn-danger"
                                    onclick="return confirm('¿Eliminar este repuesto de la orden?')">Eliminar</a>
                             <?php else: ?>
                                 <span style="color:#666;">-</span>
@@ -378,8 +378,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_tarea'])) {
                         <td>$<?php echo number_format($subtotal, 2); ?></td>
                         <td>
                             <?php if (!$orden_finalizada): ?>
-                                <a href="eliminar_tarea_orden.php?orden_id=<?php echo $orden_id; ?>&tarea_id=<?php echo $tarea['id']; ?>" 
-                                   class="btn btn-sm btn-secondary"
+                                          <a href="eliminar_tarea_orden.php?orden_id=<?php echo $orden_id; ?>&tarea_id=<?php echo $tarea['id']; ?>" 
+                                              class="btn btn-sm btn-danger"
                                    onclick="return confirm('¿Eliminar esta tarea?')">Eliminar</a>
                             <?php else: ?>
                                 <span style="color:#666;">-</span>

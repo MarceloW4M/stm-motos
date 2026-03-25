@@ -426,7 +426,7 @@ $cliente_id_valor = isset($_GET['cliente_id']) ? $_GET['cliente_id'] : '';
                     </td>
                     <td>
                         <div style="display: flex; flex-direction: column; gap: 5px;">
-                            <select onchange="cambiarEstado(<?php echo $turno['id']; ?>, this.value)" class="estado-select">
+                            <select onchange="cambiarEstado(<?php echo $turno['id']; ?>, this.value)" class="estado-select" <?php echo $turno['estado'] === 'completado' ? 'disabled' : ''; ?>>
                                 <option value="programado" <?php echo $turno['estado'] == 'programado' ? 'selected' : ''; ?>>Programado</option>
                                 <option value="en_proceso" <?php echo $turno['estado'] == 'en_proceso' ? 'selected' : ''; ?>>En Proceso</option>
                                 <option value="completado" <?php echo $turno['estado'] == 'completado' ? 'selected' : ''; ?>>Completado</option>
@@ -438,7 +438,7 @@ $cliente_id_valor = isset($_GET['cliente_id']) ? $_GET['cliente_id'] : '';
                             <?php else: ?>
                                 <a href="editar_turno.php?id=<?php echo $turno['id']; ?>" class="btn btn-sm btn-primary">Editar</a>
                             <?php endif; ?>
-                            <a href="generar_pdf.php?turno_id=<?php echo $turno['id']; ?>" class="btn btn-sm btn-secondary" target="_blank">PDF</a>
+                            <a href="generar_pdf.php?turno_id=<?php echo $turno['id']; ?>" class="btn btn-sm btn-pdf" target="_blank">PDF</a>
                             <?php if ($turno['estado'] === 'completado'): ?>
                                 <span class="btn btn-sm btn-danger" style="opacity: 0.6; pointer-events: none; cursor: not-allowed;" title="No se puede eliminar un turno completado">Eliminar</span>
                             <?php else: ?>

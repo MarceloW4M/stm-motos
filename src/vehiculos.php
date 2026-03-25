@@ -121,12 +121,12 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
     <div class="search-container">
         <form method="GET" action="vehiculos.php" class="search-form">
             <div class="search-box">
-                <span class="search-icon">🔍</span>
+                <i class="fas fa-search search-icon"></i>
                 <input type="text" name="buscar" id="searchInput" placeholder="Buscar por marca, modelo o matrícula..." value="<?php echo htmlspecialchars($busqueda); ?>">
             </div>
-            <button type="submit" class="btn-buscar">Buscar</button>
+            <button type="submit" class="btn btn-primary">Buscar</button>
             <?php if (!empty($busqueda)): ?>
-            <a href="vehiculos.php" class="btn-limpiar">Limpiar</a>
+            <a href="vehiculos.php" class="btn btn-secondary">Limpiar</a>
             <?php endif; ?>
         </form>
         <div id="resultCount" class="result-count">
