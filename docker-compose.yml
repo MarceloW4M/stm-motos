@@ -36,8 +36,11 @@ services:
       - DB_NAME=stm_taller
       - DB_USER=root
       - DB_PASS=rootpassword
-      # API key para proteger endpoints (déjalo vacío para desactivar)
-      - API_KEY=
+      # Token compartido para el servidor MCP y endpoints HTTP protegidos.
+      - API_TOKEN=
+      # Header esperado por el cliente MCP de n8n.
+      - MCP_AUTH_HEADER=Authorization
+      - MCP_AUTH_SCHEME=Bearer
 
 networks:
   stm_network:

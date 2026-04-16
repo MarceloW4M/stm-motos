@@ -208,3 +208,7 @@ Proyecto activo, con foco en:
 - migracion de legacy Access
 - soporte operativo diario del taller
 
+## MCP Server
+
+Documentación y servidor MCP para acceder a MySQL desde clientes MCP (ej. n8n): [src/mcp/README.md](src/mcp/README.md#L1)
+
