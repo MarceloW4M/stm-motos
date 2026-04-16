@@ -1,0 +1,25 @@
+<?php
+// Ejemplo de configuración — copiar a `config.php` y completar valores reales.
+define('DB_HOST', getenv('DB_HOST') ?: 'REPLACE_HOST');
+define('DB_PORT', getenv('DB_PORT') ?: 'REPLACE_PORT');
+define('DB_NAME', getenv('DB_NAME') ?: 'REPLACE_DB_NAME');
+define('DB_USER', getenv('DB_USER') ?: 'REPLACE_DB_USER');
+define('DB_PASS', getenv('DB_PASS') ?: 'REPLACE_DB_PASS');
+
+define('SITE_NAME', 'STM Taller de Motos');
+define('OPEN_TIME', '08:00:00');
+define('CLOSE_TIME', '20:00:00');
+
+define('N8N_CHAT_WEBHOOK_URL', '');
+define('N8N_CHAT_TIMEOUT_MS', 30000);
+
+define('API_TOKEN', getenv('API_TOKEN') ?: '');
+define('MCP_AUTH_HEADER', getenv('MCP_AUTH_HEADER') ?: 'Authorization');
+define('MCP_AUTH_SCHEME', getenv('MCP_AUTH_SCHEME') ?: 'Bearer');
+define('MCP_SERVER_NAME', getenv('MCP_SERVER_NAME') ?: 'stm-mcp');
+define('MCP_PROTOCOL_VERSION', getenv('MCP_PROTOCOL_VERSION') ?: '2025-03-26');
+
+function getDBConnection() {
+    // Implementación real usa `config.php` con credenciales reales.
+    return null;
+}
