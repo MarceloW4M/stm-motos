@@ -56,6 +56,42 @@ $total_franjas = ($hora_fin - $hora_inicio) + 1;
 $horas_ocupadas = count($agenda);
 $horas_libres = max($total_franjas - $horas_ocupadas, 0);
 
+// Soporte para vista semanal
+$view = isset($_GET['view']) && $_GET['view'] === 'week' ? 'week' : 'day';
+
+// Si está en vista semanal, obtener turnos de la semana
+if ($view === 'week') {
+    // Tomar lunes como inicio de semana
+    $ts_selected = strtotime($fecha_seleccionada);
+    $day_of_week = (int)date('N', $ts_selected); // 1 (Mon) - 7 (Sun)
+    $monday_ts = strtotime('-' . ($day_of_week - 1) . ' days', $ts_selected);
+    $sunday_ts = strtotime('+6 days', $monday_ts);
+    $week_start = date('Y-m-d', $monday_ts);
+    $week_end = date('Y-m-d', $sunday_ts);
+
+    $query_week = "SELECT t.*, c.nombre as cliente_nombre, v.marca, v.modelo
+                   FROM turnos t
+                   LEFT JOIN clientes c ON t.cliente_id = c.id
+                   LEFT JOIN vehiculos v ON t.vehiculo_id = v.id
+                   WHERE t.fecha BETWEEN :week_start AND :week_end
+                   ORDER BY t.fecha, t.hora_inicio";
+    $stmt_week = $db->prepare($query_week);
+    $stmt_week->bindParam(':week_start', $week_start);
+    $stmt_week->bindParam(':week_end', $week_end);
+    $stmt_week->execute();
+    $turnos_semana = $stmt_week->fetchAll(PDO::FETCH_ASSOC);
+
+    // Organizar por día y por hora
+    $dias_semana = [];
+    for ($i = 0; $i < 7; $i++) {
+        $d = date('Y-m-d', strtotime("$week_start +$i days"));
+        $dias_semana[$d] = [];
+    }
+    foreach ($turnos_semana as $t) {
+        $dias_semana[$t['fecha']][] = $t;
+    }
+}
+
 // Timeline vertical (renglones fijos por hora, turnos sin repetirse)
 $pixeles_por_minuto = 2.0;
 $minutos_totales = ($hora_fin - $hora_inicio + 1) * 60;
@@ -202,10 +238,14 @@ $chatUser = isset($_SESSION['username']) ? (string)$_SESSION['username'] : 'usua
                 }
                 ?>
             </h3>
-            <a href="turnos.php" class="btn btn-primary btn-sm">Gestionar Turnos</a>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <a href="turnos.php" class="btn btn-primary btn-sm">Gestionar Turnos</a>
+                    <a href="?fecha=<?php echo $fecha_seleccionada; ?>&view=week" class="btn btn-secondary btn-sm" title="Ver semana">Ver Semana</a>
+                    <a href="?fecha=<?php echo $fecha_seleccionada; ?>&view=day" class="btn btn-secondary btn-sm" title="Ver día">Ver Día</a>
+                </div>
         </div>
-
-        <div class="agenda-timeline" style="--timeline-height: <?php echo $altura_timeline; ?>px;">
+        <?php if ($view === 'day'): ?>
+            <div class="agenda-timeline" style="--timeline-height: <?php echo $altura_timeline; ?>px;">
             <div class="timeline-labels">
                 <?php for ($hora_actual = $hora_inicio; $hora_actual <= $hora_fin; $hora_actual++): ?>
                     <?php $top_hora = (int)(($hora_actual - $hora_inicio) * 60 * $pixeles_por_minuto); ?>
@@ -257,6 +297,63 @@ $chatUser = isset($_SESSION['username']) ? (string)$_SESSION['username'] : 'usua
                 <?php endif; ?>
             </div>
         </div>
+    <?php else: ?>
+        <!-- Vista semanal -->
+        <div class="week-view">
+            <table class="week-table" style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="width:10%; border:1px solid #e6e6e6; padding:8px;">Hora</th>
+                        <?php
+                        $dia_names = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+                        $col_dates = array_keys($dias_semana);
+                        foreach ($col_dates as $idx => $d):
+                            $label = $dia_names[$idx] . ' ' . date('d/m', strtotime($d));
+                        ?>
+                            <th style="border:1px solid #e6e6e6; padding:8px; text-align:left;"><?php echo $label; ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php for ($h = $hora_inicio; $h <= $hora_fin; $h++):
+                        $hour_label = str_pad((string)$h,2,'0',STR_PAD_LEFT) . ':00';
+                    ?>
+                    <tr>
+                        <td style="border:1px solid #f1f1f1; padding:6px; vertical-align:top;"><?php echo $hour_label; ?></td>
+                        <?php foreach ($col_dates as $d): ?>
+                        <td style="border:1px solid #f1f1f1; padding:6px; vertical-align:top; min-height:60px;">
+                            <?php
+                            if (!empty($dias_semana[$d])) {
+                                $found = false;
+                                foreach ($dias_semana[$d] as $t) {
+                                    $start_h = (int)date('H', strtotime($t['hora_inicio']));
+                                    if ($start_h === $h) {
+                                        $found = true;
+                                        ?>
+                                        <div style="background:#fff; border:1px solid #ddd; padding:6px; margin-bottom:6px; border-radius:4px;">
+                                            <div style="font-weight:bold"><?php echo htmlspecialchars($t['cliente_nombre'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                            <div style="font-size:12px; color:#666;"><?php echo date('H:i', strtotime($t['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($t['hora_fin'] ?: $t['hora_inicio'] . ' +60 minutes')); ?></div>
+                                            <div style="font-size:12px;"><?php echo htmlspecialchars($t['marca'].' '.$t['modelo'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                            <div style="margin-top:6px;"><a href="editar_turno.php?id=<?php echo $t['id']; ?>" class="btn btn-sm btn-primary">Editar</a></div>
+                                        </div>
+                                        <?php
+                                    }
+                                }
+                                if (!$found) {
+                                    echo '<span style="color:#aaa; font-size:12px;">-</span>';
+                                }
+                            } else {
+                                echo '<span style="color:#aaa; font-size:12px;">-</span>';
+                            }
+                            ?>
+                        </td>
+                        <?php endforeach; ?>
+                    </tr>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
     </div>
 </div>
 

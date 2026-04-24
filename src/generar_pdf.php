@@ -87,6 +87,11 @@ try {
             $stmt_t->bindParam(':orden_id', $turno['orden_id'], PDO::PARAM_INT);
             $stmt_t->execute();
             $turno['tareas'] = $stmt_t->fetchAll(PDO::FETCH_ASSOC);
+            // recomendaciones (texto libre) si existe
+            $stmt_rec = $db->prepare("SELECT recomendaciones FROM ordenes_reparacion WHERE id = :orden_id");
+            $stmt_rec->bindParam(':orden_id', $turno['orden_id'], PDO::PARAM_INT);
+            $stmt_rec->execute();
+            $turno['recomendaciones'] = $stmt_rec->fetchColumn();
         } catch (Exception $e) {
             // ignorar, no es fatal
             $turno['repuestos'] = [];
@@ -135,7 +140,7 @@ class FacturaSTM extends TCPDF {
         
         // ENCABEZADO COMPACTO
         $this->generarEncabezadoCompacto();
-        
+
         // INFORMACIÓN DEL CLIENTE COMPACTA
         $this->generarInfoClienteCompacta();
         
@@ -159,7 +164,7 @@ class FacturaSTM extends TCPDF {
             $this->write2DBarcode($qr_content, 'QRCODE,L', 165, 8, 30, 30, array('border' => 0), 'N');
         }
         
-        // Título compacto
+        // Título compacto: alinear verticalmente respecto al logo
         $this->SetFont('helvetica', 'B', 18);
         $this->SetTextColor(211, 47, 47);
         $this->SetXY(40, 10);
@@ -214,7 +219,7 @@ class FacturaSTM extends TCPDF {
         </table>';
         
         $this->writeHTML($html, true, false, true, false, '');
-        $this->Ln(2);
+        $this->Ln(1);
         $this->currentY = $this->GetY();
         
         // Verificar que no nos pasemos de la mitad de la página
@@ -249,11 +254,11 @@ class FacturaSTM extends TCPDF {
         </table>';
         
         $this->writeHTML($html, true, false, true, false, '');
-        $this->Ln(6);
+        $this->Ln(3);
         $this->currentY = $this->GetY();
         
         // Descripción con MultiCell limitado
-        if (!empty($this->turno['descripcion'])) {
+            if (!empty($this->turno['descripcion'])) {
             $this->SetFont('helvetica', 'B', 10);
             $this->Cell(0, 6, 'DESCRIPCIÓN DEL TRABAJO:', 0, 1);
             
@@ -263,13 +268,13 @@ class FacturaSTM extends TCPDF {
             if (strlen($descripcion) > 500) {
                 $descripcion = substr($descripcion, 0, 497) . '...';
             }
-            $this->MultiCell(0, 5, $descripcion, 0, 'L');
-            $this->Ln(4);
+            $this->MultiCell(0, 4, $descripcion, 0, 'L');
+            $this->Ln(2);
             $this->currentY = $this->GetY();
         }
         
         // Observaciones compactas
-        if (!empty($this->turno['observaciones'])) {
+            if (!empty($this->turno['observaciones'])) {
             $this->SetFont('helvetica', 'B', 10);
             $this->Cell(0, 6, 'OBSERVACIONES:', 0, 1);
             
@@ -279,14 +284,14 @@ class FacturaSTM extends TCPDF {
             if (strlen($observaciones) > 300) {
                 $observaciones = substr($observaciones, 0, 297) . '...';
             }
-            $this->MultiCell(0, 5, $observaciones, 0, 'L');
-            $this->Ln(4);
+            $this->MultiCell(0, 4, $observaciones, 0, 'L');
+            $this->Ln(2);
             $this->currentY = $this->GetY();
         }
         
         // Añadir repuestos y tareas si existen
         if (!empty($this->turno['repuestos']) || !empty($this->turno['tareas'])) {
-            $this->Ln(4);
+            $this->Ln(2);
             $this->generarItemsOrden();
         }
         
@@ -362,7 +367,7 @@ class FacturaSTM extends TCPDF {
             $this->Cell(0, 6, 'REPUESTOS UTILIZADOS', 0, 1);
             $this->SetFont('helvetica', '', 9);
 
-            $html = '<table border="1" cellpadding="3" cellspacing="0" style="width:100%; font-size:8pt;">'
+            $html = '<table border="1" cellpadding="2" cellspacing="0" style="width:100%; font-size:7.5pt;">'
                   . '<tr style="background-color:#eceff1;"><th>Nombre</th><th>Cant.</th><th>U/Precio</th><th>Subtotal</th></tr>';
             foreach ($this->turno['repuestos'] as $r) {
                 $sub = $r['cantidad'] * $r['precio_unitario'];
@@ -374,14 +379,14 @@ class FacturaSTM extends TCPDF {
             }
             $html .= '</table>';
             $this->writeHTML($html, true, false, true, false, '');
-            $this->Ln(4);
+            $this->Ln(2);
         }
         if (!empty($this->turno['tareas'])) {
             $this->SetFont('helvetica', 'B', 10);
             $this->Cell(0, 6, 'TAREAS REALIZADAS', 0, 1);
             $this->SetFont('helvetica', '', 9);
 
-            $html = '<table border="1" cellpadding="3" cellspacing="0" style="width:100%; font-size:8pt;">'
+            $html = '<table border="1" cellpadding="2" cellspacing="0" style="width:100%; font-size:7.5pt;">'
                   . '<tr style="background-color:#eceff1;"><th>Descripción</th><th>Horas</th><th>Costo/H</th><th>Subtotal</th></tr>';
             foreach ($this->turno['tareas'] as $t) {
                 $sub = $t['tiempo_horas'] * $t['costo_hora'];
@@ -393,7 +398,7 @@ class FacturaSTM extends TCPDF {
             }
             $html .= '</table>';
             $this->writeHTML($html, true, false, true, false, '');
-            $this->Ln(4);
+            $this->Ln(2);
         }
 
         // Mostrar totales si hay ítems
@@ -409,7 +414,22 @@ class FacturaSTM extends TCPDF {
                           . '<tr style="background-color:#f0f0f0;"><td><strong>TOTAL ORDEN:</strong></td><td align="right"><strong style="font-size:11pt;">$' . number_format($total_orden, 2) . '</strong></td></tr>'
                           . '</table>';
             $this->writeHTML($html_totales, true, false, true, false, '');
-            $this->Ln(6);
+            $this->Ln(3);
+
+            // Mostrar recomendaciones SI existe texto, debajo del resumen de costos
+            if (!empty($this->turno['recomendaciones'])) {
+                $this->SetFont('helvetica', 'B', 10);
+                $this->Cell(0, 6, 'RECOMENDACIONES', 0, 1);
+                $this->SetFont('helvetica', '', 9);
+                $rec = htmlspecialchars($this->turno['recomendaciones']);
+                if (strlen($rec) > 800) {
+                    $rec = substr($rec, 0, 797) . '...';
+                }
+                $this->MultiCell(0, 4, $rec, 0, 'L');
+                $this->Ln(4);
+            } else {
+                $this->Ln(4);
+            }
         }
     }
 }

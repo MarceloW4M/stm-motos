@@ -230,10 +230,10 @@ if (!empty($cliente['foto'])) {
                             </div>
 
                             <div class="form-group">
-                                <label for="cuit">CUIT:</label>
+                                <label for="cuit">DNI / CUIT:</label>
                                 <input type="text" id="cuit" name="cuit" class="form-control"
                                        value="<?php echo htmlspecialchars($cliente['cuit']); ?>"
-                                       placeholder="XX-XXXXXXXX-X">
+                                       placeholder="">
                             </div>
 
                             <div class="form-group">

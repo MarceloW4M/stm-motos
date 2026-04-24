@@ -70,6 +70,22 @@ $stmt_tareas->bindParam(':orden_id', $orden_id);
 $stmt_tareas->execute();
 $tareas_orden = $stmt_tareas->fetchAll(PDO::FETCH_ASSOC);
 
+// Calcular totales desde la base para mayor consistencia
+try {
+    $stmt_tot_repuestos = $db->prepare("SELECT COALESCE(SUM(cantidad * precio_unitario), 0) FROM orden_repuestos WHERE orden_id = :orden_id");
+    $stmt_tot_repuestos->bindParam(':orden_id', $orden_id);
+    $stmt_tot_repuestos->execute();
+    $total_repuestos = $stmt_tot_repuestos->fetchColumn();
+
+    $stmt_tot_mano = $db->prepare("SELECT COALESCE(SUM(tiempo_horas * costo_hora), 0) FROM orden_tareas WHERE orden_id = :orden_id");
+    $stmt_tot_mano->bindParam(':orden_id', $orden_id);
+    $stmt_tot_mano->execute();
+    $total_mano_obra = $stmt_tot_mano->fetchColumn();
+} catch (Exception $e) {
+    $total_repuestos = $total_repuestos ?? 0;
+    $total_mano_obra = $total_mano_obra ?? 0;
+}
+
 // Obtener repuestos disponibles
 $query_repuestos_disponibles = "SELECT id, nombre, precio, stock FROM repuestos WHERE stock > 0 ORDER BY nombre";
 $stmt_repuestos_disponibles = $db->prepare($query_repuestos_disponibles);
@@ -159,6 +175,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_tarea'])) {
         }
     }
 }
+
+// Guardar recomendaciones (texto libre) — sin validación ni costo
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_recomendaciones'])) {
+    $orden_id_post = $_POST['orden_id'];
+    $recomendaciones = $_POST['recomendaciones'] ?? '';
+    try {
+        // Intentar actualizar; si la columna no existe, crearla y reintentar
+        try {
+            $query_up = "UPDATE ordenes_reparacion SET recomendaciones = :recomendaciones WHERE id = :orden_id";
+            $stmt_up = $db->prepare($query_up);
+            $stmt_up->bindParam(':recomendaciones', $recomendaciones);
+            $stmt_up->bindParam(':orden_id', $orden_id_post);
+            $stmt_up->execute();
+        } catch (PDOException $e) {
+            // código SQLSTATE para columna desconocida puede variar; intentamos crear la columna si falla
+            $db->exec("ALTER TABLE ordenes_reparacion ADD COLUMN recomendaciones TEXT NULL");
+            $stmt_up = $db->prepare($query_up);
+            $stmt_up->bindParam(':recomendaciones', $recomendaciones);
+            $stmt_up->bindParam(':orden_id', $orden_id_post);
+            $stmt_up->execute();
+        }
+
+        $mensaje = "✅ Recomendaciones guardadas";
+        header("Location: detalle_orden.php?id=" . urlencode($orden_id_post));
+        exit();
+    } catch (Exception $e) {
+        $mensaje = "❌ Error al guardar recomendaciones: " . $e->getMessage();
+    }
+}
 ?>
 
 <div class="container">
@@ -215,6 +260,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_tarea'])) {
         <?php endif; ?>
     </div>
     
+        <!-- Tarjeta de Recomendaciones (movida debajo de Tareas Realizadas) -->
+
     <!-- Sección de repuestos -->
     <div class="form-container" style="margin-bottom: 20px;">
         <h3>Repuestos Utilizados</h3>
@@ -397,14 +444,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_tarea'])) {
         <?php endif; ?>
     </div>
     
+    <!-- Tarjeta de Recomendaciones -->
+    <div class="form-container" style="margin-bottom: 20px;">
+        <h3>Recomendaciones</h3>
+        <form method="POST" action="detalle_orden.php?id=<?php echo $orden_id; ?>">
+            <input type="hidden" name="orden_id" value="<?php echo $orden_id; ?>">
+            <div class="form-group">
+                <textarea name="recomendaciones" rows="3" placeholder="Agregar recomendaciones sobre lo realizado..."><?php echo htmlspecialchars($orden['recomendaciones'] ?? ''); ?></textarea>
+            </div>
+            <div style="margin-top:8px;">
+                <button type="submit" name="guardar_recomendaciones" class="btn btn-primary">Guardar Recomendaciones</button>
+            </div>
+        </form>
+    </div>
+
     <!-- Resumen de totales -->
     <div class="form-container">
         <h3>Resumen de Costos</h3>
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <div>
-                <p style="margin: 5px 0;"><strong>Total Repuestos:</strong> $<?php echo number_format($total_repuestos ?? 0, 2); ?></p>
-                <p style="margin: 5px 0;"><strong>Total Mano de Obra:</strong> $<?php echo number_format($total_mano_obra ?? 0, 2); ?></p>
-                <p style="margin: 10px 0; font-size: 18px; color: #007bff;"><strong>Total Orden:</strong> $<?php echo number_format(($total_repuestos ?? 0) + ($total_mano_obra ?? 0), 2); ?></p>
+                <?php
+                // Asegurar suma numérica correcta aunque las variables vengan como strings formateados
+                $tr = $total_repuestos ?? 0;
+                $tm = $total_mano_obra ?? 0;
+                if (is_string($tr)) $tr = str_replace(',', '', $tr);
+                if (is_string($tm)) $tm = str_replace(',', '', $tm);
+                $total_orden = floatval($tr) + floatval($tm);
+                ?>
+                <p style="margin: 5px 0;"><strong>Total Repuestos:</strong> $<?php echo number_format(floatval(str_replace(',', '', $tr)), 2); ?></p>
+                <p style="margin: 5px 0;"><strong>Total Mano de Obra:</strong> $<?php echo number_format(floatval(str_replace(',', '', $tm)), 2); ?></p>
+                <p style="margin: 10px 0; font-size: 18px; color: #007bff;"><strong>Total Orden:</strong> $<?php echo number_format($total_orden, 2); ?></p>
             </div>
             <div style="display: flex; gap: 10px;">
                 <a href="generar_pdf.php?orden_id=<?php echo $orden_id; ?>" class="btn btn-primary" target="_blank">Generar PDF</a>

@@ -223,8 +223,8 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
 
                 <div class="form-group">
-                    <label for="cuit">CUIT:</label>
-                    <input type="text" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
+                    <label for="cuit">DNI / CUIT:</label>
+                    <input type="text" id="cuit" name="cuit" placeholder="">
                 </div>
                 
                 <div class="form-group" style="align-self: flex-end;">

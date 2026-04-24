@@ -54,20 +54,89 @@ function contarTurnosPorHora(PDO $db, string $fecha, string $hora_inicio): int {
 
 // Procesar formulario de agregar cliente rápido
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_cliente_rapido'])) {
-    $nombre = $_POST['nombre_cliente'];
-    $telefono = $_POST['telefono_cliente'];
-    
-    try {
-        $query = "INSERT INTO clientes (nombre, telefono) VALUES (:nombre, :telefono)";
-        $stmt = $db->prepare($query);
-        $stmt->bindParam(':nombre', $nombre);
-        $stmt->bindParam(':telefono', $telefono);
-        $stmt->execute();
-        
-        $nuevo_cliente_id = $db->lastInsertId();
-        $mensaje = "✅ Cliente agregado exitosamente. ID: $nuevo_cliente_id";
-    } catch (PDOException $e) {
-        $mensaje = "❌ Error al agregar cliente: " . $e->getMessage();
+    $nombre = trim($_POST['nombre_cliente'] ?? '');
+    $telefono = trim($_POST['telefono_cliente'] ?? '');
+    $email = trim($_POST['email_cliente'] ?? '');
+
+    // Datos opcionales del primer vehículo
+    $veh_marca = trim($_POST['veh_marca'] ?? '');
+    $veh_modelo = trim($_POST['veh_modelo'] ?? '');
+    $veh_matricula = trim($_POST['veh_matricula'] ?? '');
+
+    if ($telefono === '') {
+        $mensaje = "❌ El teléfono es requerido.";
+    } else {
+        try {
+            // Verificar si el teléfono ya existe
+            $query_check = "SELECT id, nombre FROM clientes WHERE telefono = :telefono LIMIT 1";
+            $stmt_check = $db->prepare($query_check);
+            $stmt_check->bindParam(':telefono', $telefono);
+            $stmt_check->execute();
+            $cliente_existente = $stmt_check->fetch(PDO::FETCH_ASSOC);
+
+            if ($cliente_existente) {
+                $mensaje = "❌ Cliente existente !!!";
+                // Mensaje emergente
+                echo "<script>alert('Cliente existente !!!');</script>";
+            } else {
+                // Insertar nuevo cliente (email puede ser NULL)
+                $query = "INSERT INTO clientes (nombre, telefono, email) VALUES (:nombre, :telefono, :email)";
+                $stmt = $db->prepare($query);
+                $email_param = $email === '' ? null : $email;
+                $stmt->bindParam(':nombre', $nombre);
+                $stmt->bindParam(':telefono', $telefono);
+                $stmt->bindParam(':email', $email_param);
+                $stmt->execute();
+
+                $nuevo_cliente_id = $db->lastInsertId();
+
+                // Si se enviaron datos de vehículo, insertar el primer vehículo
+                $nuevo_vehiculo_id = null;
+                if ($veh_marca !== '' || $veh_modelo !== '' || $veh_matricula !== '') {
+                    $query_v = "INSERT INTO vehiculos (cliente_id, marca, modelo, matricula) VALUES (:cliente_id, :marca, :modelo, :matricula)";
+                    $stmt_v = $db->prepare($query_v);
+                    $stmt_v->bindParam(':cliente_id', $nuevo_cliente_id);
+                    $stmt_v->bindParam(':marca', $veh_marca);
+                    $stmt_v->bindParam(':modelo', $veh_modelo);
+                    $stmt_v->bindParam(':matricula', $veh_matricula);
+                    $stmt_v->execute();
+                    $nuevo_vehiculo_id = $db->lastInsertId();
+                }
+
+                $mensaje = "✅ Cliente agregado exitosamente. ID: $nuevo_cliente_id";
+
+                // JS para seleccionar el cliente en el formulario y agregar el vehículo recién creado
+                $cliente_js_nombre = htmlspecialchars($nombre, ENT_QUOTES);
+                $veh_text = htmlspecialchars(($veh_marca . ' ' . $veh_modelo . ' - ' . $veh_matricula), ENT_QUOTES);
+                $js_cliente_id = json_encode($nuevo_cliente_id);
+                $js_cliente_nombre = json_encode($cliente_js_nombre);
+                $js_nuevo_vehiculo_id = json_encode($nuevo_vehiculo_id);
+                $js_veh_text = json_encode($veh_text);
+
+                echo "<script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var clienteIdInput = document.getElementById('cliente_id');
+                        var clienteNombreInput = document.getElementById('clienteNombreTurno');
+                        if (clienteIdInput) clienteIdInput.value = " . $js_cliente_id . ";
+                        if (clienteNombreInput) clienteNombreInput.value = " . $js_cliente_nombre . ";
+
+                        var selectVeh = document.getElementById('vehiculo_id');
+                        // Si existe nuevo vehículo, agregarlo y seleccionarlo
+                        if (selectVeh && " . $js_nuevo_vehiculo_id . ") {
+                            var opt = document.createElement('option');
+                            opt.value = " . $js_nuevo_vehiculo_id . ";
+                            opt.text = " . $js_veh_text . ";
+                            selectVeh.innerHTML = '<option value=\"\">Seleccionar vehículo...</option>';
+                            selectVeh.appendChild(opt);
+                            selectVeh.value = " . $js_nuevo_vehiculo_id . ";
+                            selectVeh.disabled = false;
+                        }
+                    });
+                </script>";
+            }
+        } catch (PDOException $e) {
+            $mensaje = "❌ Error al agregar cliente: " . $e->getMessage();
+        }
     }
 }
 
@@ -274,9 +343,33 @@ $cliente_id_valor = isset($_GET['cliente_id']) ? $_GET['cliente_id'] : '';
                     <label for="telefono_cliente">Teléfono:</label>
                     <input type="text" id="telefono_cliente" name='telefono_cliente' required>
                 </div>
-                
-                <button type="submit" name="agregar_cliente_rapido" class="btn btn-primary" style="margin-right: 5px;">Agregar Cliente</button>
-                <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalCliente')">Cancelar</button>
+
+                <div class="form-group">
+                    <label for="email_cliente">Email (opcional):</label>
+                    <input type="email" id="email_cliente" name="email_cliente" placeholder="ejemplo@dominio.com">
+                </div>
+
+                <fieldset style="border:1px solid #ddd; padding:10px; margin-top:10px;">
+                    <legend style="padding:0 5px; font-size:14px;">Primer vehículo (opcional)</legend>
+                    <div class="form-group">
+                        <label for="veh_marca">Marca:</label>
+                        <input type="text" id="veh_marca" name="veh_marca">
+                    </div>
+                    <div class="form-group">
+                        <label for="veh_modelo">Modelo:</label>
+                        <input type="text" id="veh_modelo" name="veh_modelo">
+                    </div>
+                    <div class="form-group">
+                        <label for="veh_matricula">Matrícula:</label>
+                        <input type="text" id="veh_matricula" name="veh_matricula">
+                    </div>
+                    <!-- VIN eliminado: no es necesario en tarjeta rápida -->
+                </fieldset>
+
+                <div style="margin-top:10px;">
+                    <button type="submit" name="agregar_cliente_rapido" class="btn btn-primary" style="margin-right: 5px;">Agregar Cliente</button>
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalCliente')">Cancelar</button>
+                </div>
             </form>
         </div>
     </div>

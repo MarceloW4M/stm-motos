@@ -74,10 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verificar_cuit'])) {
 
     <form method="POST">
         <input type="hidden" name="id_boot" value="<?php echo htmlspecialchars($id_boot ?: '', ENT_QUOTES, 'UTF-8'); ?>">
-        <label for="cuit">CUIT</label>
-        <input id="cuit" name="cuit" type="text" placeholder="20-12345678-9" value="<?php echo htmlspecialchars($cuit_search ?: '', ENT_QUOTES, 'UTF-8'); ?>" required>
+        <label for="cuit">DNI / CUIT:</label>
+        <input id="cuit" name="cuit" type="text" placeholder="" value="<?php echo htmlspecialchars($cuit_search ?: '', ENT_QUOTES, 'UTF-8'); ?>" required>
         <div style="margin-top:12px;text-align:right">
-            <button type="submit" name="verificar_cuit" class="btn btn-primary">Verificar CUIT</button>
+            <button type="submit" name="verificar_cuit" class="btn btn-primary">Verificar</button>
         </div>
     </form>
 </div>
