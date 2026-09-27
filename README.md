@@ -1,4 +1,4 @@
-# STM - Taller de Motos
+# Sur Bateria
 
 Sistema de gestion para taller mecanico de motos, desarrollado en PHP + MySQL.
 Permite administrar clientes, vehiculos, servicios, repuestos, turnos, ordenes y reportes.
@@ -6,7 +6,7 @@ Permite administrar clientes, vehiculos, servicios, repuestos, turnos, ordenes y
 ## Resumen
 
 - Backend: `PHP 8.2` con `PDO`
-- Base de datos: `MySQL` (`stm_taller`)
+- Base de datos: `MySQL` (`surbat`)
 - Web server: `Nginx`
 - Contenedores: `Docker Compose`
 - PDF: `TCPDF`

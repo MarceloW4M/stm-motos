@@ -1,19 +1,24 @@
-version: '3.8'
-
 services:
   nginx:
     image: nginx:alpine
-    ports:
-      - "8080:80"
+    container_name: dfs_nginx
+    expose:
+      - "80"
     volumes:
       - ./src:/var/www/html
+      - ./web-stm:/var/www/html/web-stm:ro
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php
-    container_name: stm_nginx
     networks:
       - stm_network
+      - web
     restart: unless-stopped
+    environment:
+      VIRTUAL_HOST: dfssolution.duckdns.org
+      VIRTUAL_PORT: 80
+      LETSENCRYPT_HOST: dfssolution.duckdns.org
+      LETSENCRYPT_EMAIL: marcelow4mpt@gmail.com
 
   php:
     build:
@@ -21,7 +26,7 @@ services:
       dockerfile: docker/php/Dockerfile
     volumes:
       - ./src:/var/www/html
-    container_name: stm_php
+    container_name: dfs_php
     networks:
       - stm_network
     restart: unless-stopped
@@ -30,22 +35,18 @@ services:
       - PHP_MAX_EXECUTION_TIME=120
       - PHP_UPLOAD_MAX_FILESIZE=20M
       - PHP_POST_MAX_SIZE=20M
-      # Variables de entorno para la aplicación y conexión a BD
       - DB_HOST=10.50.0.30
       - DB_PORT=3406
-      - DB_NAME=stm_taller
-      - DB_USER=root
-      - DB_PASS=rootpassword
-      # Token compartido para el servidor MCP y endpoints HTTP protegidos.
+      - DB_NAME=dfs-web
+      - DB_USER=stm_app
+      - DB_PASS=stm_app_pass
       - API_TOKEN=
-      # Header esperado por el cliente MCP de n8n.
       - MCP_AUTH_HEADER=Authorization
       - MCP_AUTH_SCHEME=Bearer
 
 networks:
   stm_network:
     driver: bridge
-
-volumes:
-  php_sessions:
-    driver: local
+  web:
+    external: true
+    name: stm-taller-motos_web

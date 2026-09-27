@@ -2,6 +2,7 @@ FROM php:8.2-fpm
 
 # Instalar extensiones necesarias
 RUN apt-get update && apt-get install -y \
+    curl \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
@@ -24,4 +25,4 @@ EXPOSE 9000
 
 # Salud check para el contenedor
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost/ping || exit 1
+    CMD php-fpm -t || exit 1
